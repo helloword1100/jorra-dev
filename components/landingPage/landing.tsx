@@ -155,7 +155,7 @@ const LandingPage = () => {
                                     disabled={loading.guest}
                                 >
                                     {loading.guest ?
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Try Onsss a Hairstyle"}
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Try On a Hairstyle"}
                                 </Button>
                                 <Button asChild className="bg-[#F13DD4] hover:bg-[#F13DD4] text-white px-8 py-6 text-md font-normal rounded-sm">
                                     <Link href="/auth">Book Hair Appointment</Link>
