@@ -1,8 +1,11 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, Share2, RotateCcw, Heart } from "lucide-react"
+import { BookingModal } from "@/components/ui/booking-modal"
+import { Download, Share2, RotateCcw, Heart, Calendar } from "lucide-react"
 import Image from "next/image"
 
 interface GenerationResultProps {
@@ -14,6 +17,11 @@ interface GenerationResultProps {
 }
 
 export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, className = "" }: GenerationResultProps) {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const router = useRouter()
+
+  console.log("GenerationResult render - isBookingModalOpen:", isBookingModalOpen)
+
   const handleDownload = () => {
     const link = document.createElement("a")
     link.href = resultImage
@@ -21,6 +29,11 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+  }
+
+  const handleBookAppointment = () => {
+    console.log("Book appointment clicked, opening modal...")
+    setIsBookingModalOpen(true)
   }
 
   return (
@@ -60,9 +73,22 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
               Save
             </Button>
           )}
-          <Button onClick={onTryAgain} className="flex items-center gap-2">
+          <Button onClick={() => {
+            router.push('/dashboard')
+          }} className="flex items-center gap-2">
             <RotateCcw className="h-4 w-4" />
-            Try Again
+            Try again
+          </Button>
+        </div>
+
+        {/* Book Appointment Button */}
+        <div className="mt-2">
+          <Button
+            onClick={handleBookAppointment}
+            className="w-full flex items-center justify-center gap-2 bg-[#F13DD4] hover:bg-[#E532C8]"
+          >
+            <Calendar className="h-4 w-4" />
+            Book Appointment
           </Button>
         </div>
 
@@ -70,6 +96,12 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
           Love your new look? Download and share it with friends!
         </p>
       </CardContent>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      />
     </Card>
   )
 }

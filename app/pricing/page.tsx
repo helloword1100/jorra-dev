@@ -20,7 +20,7 @@ export default function PricingPage() {
             <div className="container mx-auto px-6 py-8 max-w-6xl">
               {/* Header Section */}
               <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F13DD4]/10 border border-primary/20 mb-6">
                   <Crown className="h-4 w-4 text-primary" />
                   <span className="text-sm font-semibold text-primary">BETA PROGRAM</span>
                 </div>
@@ -36,14 +36,14 @@ export default function PricingPage() {
               <div className="grid md:grid-cols-3 gap-6 mb-12">
                 <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 shadow-lg shadow-primary/5">
                   <CardHeader className="text-center pb-4">
-                    <div className="mx-auto h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center mb-4">
-                      <Gift className="h-6 w-6 text-primary" />
+                    <div className="mx-auto h-12 w-12 rounded-xl bg-[#F13DD4] flex items-center justify-center mb-4">
+                      <Gift className="h-6 w-6 text-white" />
                     </div>
                     <CardTitle className="text-lg">Free Beta Access</CardTitle>
                     <CardDescription>Unlimited hairstyle try-ons during beta</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="text-3xl font-bold text-primary mb-2">FREE</div>
+                    <div className="text-3xl font-bold text-[#F13DD4]  mb-2">FREE</div>
                     <p className="text-sm text-muted-foreground">No credit card required</p>
                   </CardContent>
                 </Card>
@@ -53,28 +53,28 @@ export default function PricingPage() {
                     POPULAR
                   </div>
                   <CardHeader className="text-center pb-4">
-                    <div className="mx-auto h-12 w-12 rounded-xl bg-primary flex items-center justify-center mb-4">
+                    <div className="mx-auto h-12 w-12 rounded-xl bg-[#F13DD4] flex items-center justify-center mb-4">
                       <Share2 className="h-6 w-6 text-primary-foreground" />
                     </div>
                     <CardTitle className="text-lg">Social Media Bonus</CardTitle>
                     <CardDescription>Share your results and earn more try-ons</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="text-3xl font-bold text-primary mb-2">+5</div>
+                    <div className="text-3xl font-bold text-[#F13DD4]  mb-2">+5</div>
                     <p className="text-sm text-muted-foreground">Try-ons per #jorra post</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10 shadow-lg shadow-accent/5">
+                <Card className="border-accent/20  bg-[#F13DD4]/10 shadow-lg shadow-accent/5">
                   <CardHeader className="text-center pb-4">
-                    <div className="mx-auto h-12 w-12 rounded-xl bg-accent/20 flex items-center justify-center mb-4">
+                    <div className="mx-auto h-12 w-12 rounded-xl bg-[#F13DD4] flex items-center justify-center mb-4">
                       <Video className="h-6 w-6 text-accent-foreground" />
                     </div>
                     <CardTitle className="text-lg">Video Generation</CardTitle>
                     <CardDescription>Create dynamic videos of your try-ons</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="text-3xl font-bold text-accent-foreground mb-2">10</div>
+                    <div className="text-3xl font-bold text-[#F13DD4] mb-2">10</div>
                     <p className="text-sm text-muted-foreground">Try-ons per video</p>
                   </CardContent>
                 </Card>
@@ -179,11 +179,11 @@ export default function PricingPage() {
                       and get 5 additional try-ons for each post!
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button size="lg" className="bg-primary hover:bg-primary/90">
+                      <Button size="lg" className="bg-[#F13DD4] hover:bg-[#F13DD4]">
                         <Share2 className="h-4 w-4 mr-2" />
                         Share on Social Media
                       </Button>
-                      <Button size="lg" variant="outline">
+                      <Button size="lg" variant="outline" className="hover:bg-[#F13DD4] ">
                         <Video className="h-4 w-4 mr-2" />
                         Generate Video (10 try-ons)
                       </Button>

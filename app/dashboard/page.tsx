@@ -38,8 +38,8 @@ export default function DashboardPage() {
         <MobileHeader />
 
         <div className="flex-1 space-y-6 p-4 md:p-8 pb-20 md:pb-8">
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+          <div className="space-y-2 text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground ">
               Welcome back, {user.username}!
             </h1>
             <p className="text-sm md:text-base text-muted-foreground">Ready to try some new styles with Jorra?</p>

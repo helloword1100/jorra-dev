@@ -82,12 +82,12 @@ export function GenerationCard({ generation, onDownload, onShare, onTryAgain }: 
               description="Generated with Jorra - try it yourself! #jorra"
               variant="outline"
               size="sm"
-              className="bg-white/90 hover:bg-white text-foreground border-white/20"
+              className="bg-white/90 hover:bg-white text-foreground border-white/20 hover:text-black"
             />
             <Button
               size="sm"
               onClick={handleTryAgain}
-              className="bg-primary/90 hover:bg-primary text-primary-foreground"
+              className="bg-[#F13DD4] hover:bg-[#F13DD4] text-primary-foreground"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -117,7 +117,9 @@ export function GenerationCard({ generation, onDownload, onShare, onTryAgain }: 
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t">
-          <Button variant="ghost" size="sm" onClick={handleDownload} className="text-xs">
+          <Button variant="ghost" size="sm" onClick={handleDownload} className="text-xs
+          
+          bg-[#F13DD4] hover:text-white hover:bg-[#F13DD4] text-white hover:cursor-pointer">
             <Download className="h-3 w-3 mr-1" />
             Download
           </Button>
@@ -125,7 +127,7 @@ export function GenerationCard({ generation, onDownload, onShare, onTryAgain }: 
             variant="ghost"
             size="sm"
             onClick={handleTryAgain}
-            className="text-xs text-primary hover:text-primary"
+            className="text-xs  text-[#F13DD4] hover:text-[#F13DD4] hover:bg-transparent hover:cursor-pointer"
           >
             <RotateCcw className="h-3 w-3 mr-1" />
             Try Again

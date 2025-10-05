@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 // import SuperHeader from './SuperHeader';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -8,12 +8,16 @@ import TestimonialsSection from './testimonials';
 import FAQSection from './faq-section';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
+import { Loader2 } from 'lucide-react';
 
 
 const LandingPage = () => {
 
-    const { user, loading } = useAuth()
-
+    const { user, login } = useAuth()
+    const [loading, setLoading] = useState({
+        guest: false,
+        user: false
+    })
     const features = [
         {
             bgColor: "#FFDBB0",
@@ -95,6 +99,24 @@ const LandingPage = () => {
         },
     ]
 
+    const [error, setError] = useState("")
+
+    const handleGuestLogin = async () => {
+
+        setLoading({ ...loading, guest: true })
+        setError("")
+
+        try {
+            await login('Guest', 'Guest123')
+            localStorage.setItem('isGuest', 'true');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Login failed")
+        } finally {
+            setLoading({ ...loading, guest: false })
+        }
+
+    }
+
     return (
         <>
             <section className="  " >
@@ -125,16 +147,18 @@ const LandingPage = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Button asChild className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-md font-normal rounded-sm">
-                                    <Link href={
-                                        '/auth'
-                                    }>Try On a Hairstyle</Link>
+                                <Button
+                                    className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-md font-normal rounded-sm"
+                                    onClick={() => {
+                                        handleGuestLogin()
+                                    }}
+                                    disabled={loading.guest}
+                                >
+                                    {loading.guest ?
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Try Onsss a Hairstyle"}
                                 </Button>
-                                <Button className="bg-[#F13DD4] hover:bg-[#F13DD4] text-white px-8 py-6 text-md font-normal rounded-sm">
-
-                                    <Link href={
-                                        '/auth'
-                                    }> Book Hair Appointment</Link>
+                                <Button asChild className="bg-[#F13DD4] hover:bg-[#F13DD4] text-white px-8 py-6 text-md font-normal rounded-sm">
+                                    <Link href="/auth">Book Hair Appointment</Link>
                                 </Button>
                             </div>
 

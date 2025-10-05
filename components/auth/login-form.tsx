@@ -102,7 +102,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             Sign up
           </button>
         </div>
-        <div className="mt-4 text-center text-sm">
+        {/* <div className="mt-4 text-center text-sm">
           Signin as a{" "}
           <button onClick={handleGuestLogin}
             disabled={loading?.user || loading?.guest}
@@ -115,7 +115,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             }
 
           </button>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )

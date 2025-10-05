@@ -115,8 +115,8 @@ export function HairstyleUploadForm() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <ImageIcon className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F13DD4]">
+              <ImageIcon className="h-5 w-5 text-white" />
             </div>
             <div>
               <Label className="text-base md:text-lg font-semibold text-foreground">Hairstyle Image *</Label>
@@ -137,8 +137,8 @@ export function HairstyleUploadForm() {
           <Card className="border-border/50 shadow-sm">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                  <FileText className="h-4 w-4 text-primary" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F13DD4]">
+                  <FileText className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">Hairstyle Details</CardTitle>

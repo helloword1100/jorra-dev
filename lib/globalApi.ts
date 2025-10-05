@@ -9,7 +9,7 @@ const getHairStyles = async () => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "hairstyles/hair/public",
+      url: "https://niyo-nhb-prod-api-wtushxuzaa-nw.a.run.app/api/v1/hairstyles/hair/public",
       headers: {},
     };
 

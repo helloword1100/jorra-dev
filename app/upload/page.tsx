@@ -42,7 +42,7 @@ export default function UploadPage() {
         <div className="flex-1 space-y-8 p-6 md:p-8 lg:p-10 pb-20 md:pb-8 lg:pb-10">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl  shadow-lg bg-[#F13DD4]">
                 <Upload className="h-7 w-7 text-primary-foreground" />
               </div>
               <div className="space-y-2">

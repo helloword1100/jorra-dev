@@ -43,7 +43,13 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border/50">
       <SidebarHeader className="p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <Image src="/jorra-logo.png" alt="Jorra" width={60} height={24} className="h-6 w-auto" />
+          <div className="flex items-center ">
+            <Image src="/header/logo-pink.svg" alt="Menu" width={40} height={40} className="
+        md:h-5
+        h-8 w-auto" />
+            <Image src="/jorra-logo.png" alt="Jorra" width={40} height={32} className="md:h-4
+        h-6 w-auto" />
+          </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">by Docwyn AI x Niyo</p>
           </div>
@@ -58,7 +64,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border/50 shadow-sm">
               <Avatar className="h-10 w-10 ring-2 ring-primary/10">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-sm font-bold">
+                <AvatarFallback className="
+                bg-[#F13DD4] text-primary-foreground text-sm font-bold">
                   {user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Progress } from "@/components/ui/progress"
 import { Sparkles } from "lucide-react"
+import Image from "next/image"
 
 const INSPIRATIONAL_QUOTES = [
   "Beauty begins the moment you decide to be yourself. - Coco Chanel",
@@ -83,7 +84,76 @@ export function InspirationalProgress({
         </div>
 
         <div className="space-y-3">
-          <Progress value={progress} className="h-3" />
+
+          {/* Logo with circular progress overlay */}
+          <div className="relative flex items-center justify-center animate-float">
+            <div className="relative">
+              {/* Circular progress ring */}
+              <svg className="absolute inset-0 w-32 h-32 md:w-40 md:h-40 transform -rotate-90" viewBox="0 0 100 100">
+                {/* Background circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                  className="text-gray-200/50"
+                />
+                {/* Progress circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                  strokeDasharray={`${2 * Math.PI * 42}`}
+                  strokeDashoffset={`${2 * Math.PI * 42 * (1 - progress / 100)}`}
+                  className="text-pink-500 transition-all duration-500 ease-out drop-shadow-sm"
+                  strokeLinecap="round"
+                />
+                {/* Glowing effect */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeDasharray={`${2 * Math.PI * 42}`}
+                  strokeDashoffset={`${2 * Math.PI * 42 * (1 - progress / 100)}`}
+                  className="text-pink-300 transition-all duration-500 ease-out opacity-60"
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              {/* Logo in center with floating animation */}
+              <div className="flex items-center justify-center w-32 h-32 md:w-40 md:h-40 ">
+                <Image
+                  src="/header/logo-pink.svg"
+                  alt="Menu"
+                  width={120}
+                  height={60}
+                  className="md:h-36 h-12 w-auto drop-shadow-lg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+            @keyframes float {
+              0%, 100% { 
+                transform: translateY(0px) scale(1);
+              }
+              50% { 
+                transform: translateY(-8px) scale(1.02);
+              }
+            }
+            .animate-float {
+              animation: float 3s ease-in-out infinite;
+            }
+          `}</style>
           <p className="text-sm text-muted-foreground">
             {Math.round(progress)}% Complete •{" "}
             {Math.max(0, Math.round((duration - (progress * duration) / 100) / 1000))}s remaining

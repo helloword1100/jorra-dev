@@ -21,12 +21,14 @@ export default function TryOnPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const preselectedHairstyleId = searchParams.get("hairstyle")
+  const preselectedPhoto = searchParams.get("photo")
 
   const [selfieFile, setSelfieFile] = useState<File | null>(null)
   const [selectedHairstyle, setSelectedHairstyle] = useState<Hairstyle | null>(null)
   const [resultImage, setResultImage] = useState<string | null>(null)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState("")
+  const [comingFromFeatured, setComingFromFeatured] = useState(false)
 
   // Load preselected hairstyle if provided
   useEffect(() => {
@@ -42,6 +44,35 @@ export default function TryOnPage() {
       loadHairstyle()
     }
   }, [preselectedHairstyleId, selectedHairstyle])
+
+  // Handle preselected photo from featured page
+  useEffect(() => {
+    if (preselectedPhoto && preselectedHairstyleId) {
+      setComingFromFeatured(true)
+      // Convert base64 image to File object
+      const convertBase64ToFile = async (base64String: string) => {
+        try {
+          const response = await fetch(base64String)
+          const blob = await response.blob()
+          const file = new File([blob], 'selfie.jpg', { type: 'image/jpeg' })
+          setSelfieFile(file)
+        } catch (error) {
+          console.error('Failed to convert photo:', error)
+          setError('Failed to load photo from featured page')
+        }
+      }
+
+      convertBase64ToFile(decodeURIComponent(preselectedPhoto))
+    }
+  }, [preselectedPhoto, preselectedHairstyleId])
+
+  // Auto-start generation when both photo and hairstyle are loaded from featured page
+  useEffect(() => {
+    if (comingFromFeatured && selfieFile && selectedHairstyle && user && !generating && !resultImage) {
+      // Start generation immediately without delay
+      handleGenerate()
+    }
+  }, [comingFromFeatured, selfieFile, selectedHairstyle, user])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -76,8 +107,13 @@ export default function TryOnPage() {
   }
 
   const handleTryAgain = () => {
-    setResultImage(null)
-    setError("")
+    if (comingFromFeatured) {
+      // Redirect to dashboard when coming from featured page
+      router.push('/dashboard')
+    } else {
+      setResultImage(null)
+      setError("")
+    }
   }
 
   const handleRemoveSelfie = () => {
@@ -105,7 +141,7 @@ export default function TryOnPage() {
         <div className="flex-1 space-y-6 p-4 md:p-8 pb-20 md:pb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-primary rounded-lg p-2">
+              <div className="bg-[#F13DD4] rounded-lg p-2">
                 <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
@@ -115,7 +151,7 @@ export default function TryOnPage() {
             </div>
             <div className="text-right">
               <p className="text-xs md:text-sm text-muted-foreground">Try-ons remaining</p>
-              <p className="text-xl md:text-2xl font-bold text-primary">{user.try_ons}</p>
+              <p className="text-xl md:text-2xl font-bold text-[#F13DD4]">{user.try_ons}</p>
             </div>
           </div>
 
@@ -131,7 +167,7 @@ export default function TryOnPage() {
               />
             )}
 
-            {!generating && !resultImage ? (
+            {!generating && !resultImage && !comingFromFeatured ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <SelfieUpload
                   onImageSelect={setSelfieFile}
@@ -185,7 +221,7 @@ export default function TryOnPage() {
               </div>
             ) : null}
 
-            {!generating && !resultImage && (
+            {!generating && !resultImage && !comingFromFeatured && (
               <div className="mt-8 text-center">
                 {error && (
                   <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive max-w-md mx-auto">
@@ -198,7 +234,7 @@ export default function TryOnPage() {
                   onClick={handleGenerate}
                   disabled={!selfieFile || !selectedHairstyle || generating || user.try_ons <= 0}
                   size="lg"
-                  className="px-8"
+                  className="px-8 bg-[#F13DD4] hover:cursor-pointer hover:bg-[#F13DD4] "
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
                   Generate My Look

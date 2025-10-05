@@ -41,7 +41,7 @@ export default function HistoryPage() {
           {/* Page Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-primary rounded-lg p-2">
+              <div className="bg-[#F13DD4] rounded-lg p-2">
                 <History className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
@@ -49,7 +49,9 @@ export default function HistoryPage() {
                 <p className="text-xs md:text-base text-muted-foreground">View and manage your past creations</p>
               </div>
             </div>
-            <Button onClick={() => router.push("/try-on")} size="sm" className="md:h-10">
+            <Button onClick={() => router.push("/try-on")} size="sm" className="md:h-10
+            bg-[#F13DD4] hover:cursor-pointer hover:bg-[#F13DD4]
+            ">
               <Sparkles className="h-4 w-4 mr-0 md:mr-2" />
               <span className="hidden md:inline">Create New</span>
             </Button>
