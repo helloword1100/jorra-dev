@@ -115,7 +115,7 @@ export function GenerationGallery() {
           <h3 className="text-lg font-medium text-foreground mb-2">No generations yet</h3>
           <p className="text-muted-foreground mb-6">Start creating your first hairstyle generation to see them here</p>
           <div className="flex gap-3 justify-center">
-            <Button onClick={() => router.push("/try-on")}>Try On Hairstyles</Button>
+            <Button onClick={() => router.push("/dashboard")}>Try On Hairstyles</Button>
             <Button variant="outline" onClick={() => router.push("/gallery")}>
               Browse Gallery
             </Button>

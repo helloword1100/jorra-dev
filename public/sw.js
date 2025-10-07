@@ -1,6 +1,6 @@
 // Service Worker for PWA
 const CACHE_NAME = "jorra-v1"
-const urlsToCache = ["/", "/gallery", "/try-on", "/profile"]
+const urlsToCache = ["/", "/dashboard", "/gallery", "/profile"]
 
 // Install event - cache essential resources
 self.addEventListener("install", (event) => {

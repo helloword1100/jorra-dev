@@ -99,15 +99,6 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => handleNavigation("/try-on")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <Camera className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Try On Styles</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
                   onClick={() => handleNavigation("/gallery")}
                   className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
                 >
