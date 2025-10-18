@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Sparkles, Camera, AlertCircle, UploadCloud, Check, RefreshCw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 import { useAuth } from "@/hooks/use-auth"
 import { HairstyleService, TryOnService, type Hairstyle } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -102,6 +103,8 @@ export default function Featured({ username }: FeaturedProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const generationIntervalRef = useRef<number | null>(null)
+  const generationStartTimeRef = useRef<number | null>(null)
 
   const { user, refreshUser } = useAuth()
 
@@ -116,6 +119,8 @@ export default function Featured({ username }: FeaturedProps) {
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isCaptureReady, setIsCaptureReady] = useState(false)
+  const [generationProgress, setGenerationProgress] = useState(0)
+  const [generationElapsedSeconds, setGenerationElapsedSeconds] = useState(0)
 
   useEffect(() => {
     const loadHairstyles = async () => {
@@ -195,6 +200,53 @@ export default function Featured({ username }: FeaturedProps) {
       stopCamera(streamRef, videoRef, setIsCameraActive, setIsCaptureReady)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isGenerating) {
+      if (generationIntervalRef.current !== null) {
+        window.clearInterval(generationIntervalRef.current)
+        generationIntervalRef.current = null
+      }
+      generationStartTimeRef.current = null
+      setGenerationProgress(0)
+      setGenerationElapsedSeconds(0)
+      return
+    }
+
+    generationStartTimeRef.current = Date.now()
+    const startTime = generationStartTimeRef.current
+    if (!startTime) return
+
+    setGenerationProgress(0)
+    setGenerationElapsedSeconds(0)
+
+    if (generationIntervalRef.current !== null) {
+      window.clearInterval(generationIntervalRef.current)
+    }
+
+    generationIntervalRef.current = window.setInterval(() => {
+      const elapsedMs = Date.now() - startTime
+      const elapsedSeconds = Math.floor(elapsedMs / 1000)
+      const cappedSeconds = Math.min(elapsedSeconds, 35)
+      const progressValue = Math.min((elapsedMs / 35000) * 100, 100)
+
+      setGenerationElapsedSeconds(cappedSeconds)
+      setGenerationProgress((previousValue) => {
+        if (previousValue === 100 && progressValue === 100) {
+          return previousValue
+        }
+        return progressValue
+      })
+    }, 500)
+
+    return () => {
+      if (generationIntervalRef.current !== null) {
+        window.clearInterval(generationIntervalRef.current)
+        generationIntervalRef.current = null
+      }
+      generationStartTimeRef.current = null
+    }
+  }, [isGenerating])
 
   const displayedHairstyles = useMemo(() => {
     if (!hairstyles.length) return []
@@ -313,6 +365,18 @@ export default function Featured({ username }: FeaturedProps) {
       const resultBlob = await TryOnService.applyHairstyleById(selectedHairstyle.id, selfieFile)
       const resultDataUrl = await blobToDataUrl(resultBlob)
 
+      if (generationIntervalRef.current !== null) {
+        window.clearInterval(generationIntervalRef.current)
+        generationIntervalRef.current = null
+      }
+      const totalElapsedSeconds =
+        generationStartTimeRef.current !== null
+          ? Math.floor((Date.now() - generationStartTimeRef.current) / 1000)
+          : generationElapsedSeconds
+      setGenerationElapsedSeconds(Math.min(totalElapsedSeconds, 35))
+      setGenerationProgress(100)
+      generationStartTimeRef.current = null
+
       await refreshUser().catch(() => undefined)
 
       stopCamera(streamRef, videoRef, setIsCameraActive, setIsCaptureReady)
@@ -359,11 +423,16 @@ export default function Featured({ username }: FeaturedProps) {
   const isGenerateDisabled =
     !capturedPhoto || !selectedHairstyle || isGenerating || (user ? user.try_ons <= 0 : false)
 
+  const progressPercentage = Math.min(Math.round(generationProgress), 100)
+  const displayedElapsedSeconds = Math.min(generationElapsedSeconds, 35)
+  const isProgressComplete = progressPercentage >= 100
+
   return (
     <div className="space-y-12">
       {isGenerating && (
         <div className="fixed inset-0 z-[70] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-5 text-center">
+          <div className="w-[min(320px,82vw)] space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 text-center shadow-[0_18px_40px_rgba(241,61,212,0.25)] backdrop-blur">
+            <div className="flex flex-col items-center gap-5">
               <Image
                 src="/header/logo-pink.svg"
                 alt="Jorra loader"
@@ -372,12 +441,22 @@ export default function Featured({ username }: FeaturedProps) {
                 className="animate-[spin_2.4s_linear_infinite] drop-shadow-[0_12px_30px_rgba(241,61,212,0.45)]"
                 priority
               />
-            <div className="space-y-1">
-              <p className="text-lg font-semibold text-white">Generating your hairstyle…</p>
-              {selectedHairstyle?.name && (
-                <p className="text-sm text-white/80">
-                  Applying the <span className="font-medium">{selectedHairstyle.name}</span> look with Jorra magic.
-                </p>
+              <div className="space-y-1">
+                <p className="text-lg font-semibold text-white">Generating your hairstyle…</p>
+                {selectedHairstyle?.name && (
+                  <p className="text-sm text-white/80">
+                    Applying the <span className="font-medium">{selectedHairstyle.name}</span> look with Jorra magic.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Progress value={progressPercentage} className="bg-white/20" />
+              <p className="text-xs font-medium text-white">
+                {progressPercentage}% complete · {displayedElapsedSeconds}s / 35s
+              </p>
+              {isProgressComplete && (
+                <p className="text-xs text-white/70">Hang tight—adding the final touches.</p>
               )}
             </div>
           </div>
