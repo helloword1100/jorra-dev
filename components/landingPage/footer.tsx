@@ -18,8 +18,8 @@ const Footer = () => {
                         <h3 className="font-light text-[#FFFFFF] mb-2">AR Virtual Hair Try on</h3>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-[#FFFFFF] mb-2.5">Contact Us</h3>
-                        <div className="space-y-2 text-sm text-[#FFFFFF]">
+                        <h3 className="font-semibold text-[#FFFFFF]">Contact Us</h3>
+                        <div className=" text-sm text-[#FFFFFF]">
                             <p>jorra@jorra.com</p>
                             <p>0121 828 9210</p>
                         </div>
@@ -27,7 +27,7 @@ const Footer = () => {
 
                     <div>
                         <h3 className="font-semibold mb-2.5">Our Links</h3>
-                        <div className="space-y-2 text-sm text-[#FFFFFF]">
+                        <div className=" text-sm text-[#FFFFFF]">
                             <p>About</p>
                             <p>Hair Styles</p>
                             <p>Bookmarks</p>
@@ -39,7 +39,7 @@ const Footer = () => {
 
                     <div>
                         <h3 className="font-semibold mb-2.5">Legal</h3>
-                        <div className="space-y-2 text-sm text-[#FFFFFF] cursor-pointer">
+                        <div className=" text-sm text-[#FFFFFF] cursor-pointer">
                             <p>Terms of Service</p>
                             <p>Privacy Policy</p>
                         </div>
