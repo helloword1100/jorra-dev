@@ -272,7 +272,7 @@ export class TryOnService {
           headers: AuthService.getAuthHeaders(),
           body: formData,
         },
-        30000, // 30 second timeout for generation
+        120000, // 2 minute timeout for generation
       )
 
       if (!response.ok) {
@@ -317,7 +317,7 @@ export class TryOnService {
           headers: AuthService.getAuthHeaders(),
           body: formData,
         },
-        30000, // 30 second timeout
+        120000, // 2 minute timeout for generation
       )
 
       if (!response.ok) {

@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
+import { Download, Share2, RotateCcw, Heart, Calendar } from "lucide-react"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BookingModal } from "@/components/ui/booking-modal"
-import { Download, Share2, RotateCcw, Heart, Calendar } from "lucide-react"
-import Image from "next/image"
+import type { Hairstyle } from "@/lib/api"
 
 interface GenerationResultProps {
   resultImage: string
@@ -14,13 +14,18 @@ interface GenerationResultProps {
   onSave?: () => void
   onShare?: () => void
   className?: string
+  hairstyle?: Hairstyle
 }
 
-export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, className = "" }: GenerationResultProps) {
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+export function GenerationResult({
+  resultImage,
+  onTryAgain,
+  onSave,
+  onShare,
+  className = "",
+  hairstyle,
+}: GenerationResultProps) {
   const router = useRouter()
-
-  console.log("GenerationResult render - isBookingModalOpen:", isBookingModalOpen)
 
   const handleDownload = () => {
     const link = document.createElement("a")
@@ -32,18 +37,32 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
   }
 
   const handleBookAppointment = () => {
-    console.log("Book appointment clicked, opening modal...")
-    setIsBookingModalOpen(true)
+    const params = new URLSearchParams()
+
+    if (hairstyle?.id) {
+      params.set("hairstyleId", hairstyle.id.toString())
+    }
+
+    if (hairstyle?.name) {
+      params.set("hairstyleName", hairstyle.name)
+    }
+
+    if (resultImage) {
+      params.set("image", resultImage)
+    }
+
+    params.set("origin", "try-on")
+
+    router.push(`/booking?${params.toString()}`)
   }
 
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-center text-primary">Your New Look!</CardTitle>
+        <CardTitle className="text-center text-lg text-primary">Your New Look!</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Result Image */}
-        <div className="relative aspect-[3/4] md:aspect-[4/5] lg:aspect-[3/4] rounded-lg overflow-hidden bg-muted">
+        <div className="relative aspect-[3/4] rounded-lg bg-muted md:aspect-[4/5] lg:aspect-[3/4]">
           <Image
             src={resultImage || "/placeholder.svg"}
             alt="Generated hairstyle result"
@@ -52,7 +71,6 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
           />
         </div>
 
-        {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <Button onClick={handleDownload} variant="outline" className="flex items-center gap-2 bg-transparent">
             <Download className="h-4 w-4" />
@@ -73,35 +91,26 @@ export function GenerationResult({ resultImage, onTryAgain, onSave, onShare, cla
               Save
             </Button>
           )}
-          <Button onClick={() => {
-            router.push('/dashboard')
-          }} className="flex items-center gap-2">
+          <Button onClick={onTryAgain} className="flex items-center gap-2">
             <RotateCcw className="h-4 w-4" />
             Try again
           </Button>
         </div>
 
-        {/* Book Appointment Button */}
         <div className="mt-2">
           <Button
             onClick={handleBookAppointment}
-            className="w-full flex items-center justify-center gap-2 bg-[#F13DD4] hover:bg-[#E532C8]"
+            className="flex w-full items-center justify-center gap-2 bg-[#F13DD4] hover:bg-[#E532C8]"
           >
             <Calendar className="h-4 w-4" />
             Book Appointment
           </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-center text-xs text-muted-foreground">
           Love your new look? Download and share it with friends!
         </p>
       </CardContent>
-
-      {/* Booking Modal */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-      />
     </Card>
   )
 }

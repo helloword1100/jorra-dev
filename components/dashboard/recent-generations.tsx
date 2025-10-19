@@ -123,7 +123,7 @@ export function RecentGenerations() {
           <div className="text-center py-8">
             <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground mb-2">No generations yet</p>
-            <Button size="sm" onClick={() => router.push("/try-on")}>
+            <Button size="sm" onClick={() => router.push("/dashboard")}>
               Try Your First Style
             </Button>
           </div>

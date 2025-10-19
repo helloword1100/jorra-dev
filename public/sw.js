@@ -1,6 +1,6 @@
 // Service Worker for PWA
-const CACHE_NAME = "jorra-v1"
-const urlsToCache = ["/", "/gallery", "/try-on", "/profile"]
+const CACHE_NAME = "jorra-v2"
+const urlsToCache = ["/", "/dashboard", "/gallery", "/profile"]
 
 // Install event - cache essential resources
 self.addEventListener("install", (event) => {
@@ -30,9 +30,21 @@ self.addEventListener("activate", (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") {
+    return
+  }
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request)
-    }),
+    fetch(event.request)
+      .then((response) => {
+        const clonedResponse = response.clone()
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clonedResponse)
+        })
+        return response
+      })
+      .catch(() => {
+        return caches.match(event.request)
+      }),
   )
 })

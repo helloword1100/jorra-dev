@@ -49,7 +49,7 @@ export default function HistoryPage() {
                 <p className="text-xs md:text-base text-muted-foreground">View and manage your past creations</p>
               </div>
             </div>
-            <Button onClick={() => router.push("/try-on")} size="sm" className="md:h-10
+            <Button onClick={() => router.push("/dashboard")} size="sm" className="md:h-10
             bg-[#F13DD4] hover:cursor-pointer hover:bg-[#F13DD4]
             ">
               <Sparkles className="h-4 w-4 mr-0 md:mr-2" />

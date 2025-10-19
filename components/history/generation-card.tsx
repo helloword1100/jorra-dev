@@ -36,9 +36,9 @@ export function GenerationCard({ generation, onDownload, onShare, onTryAgain }: 
 
   const handleTryAgain = () => {
     if (generation.hairstyle) {
-      router.push(`/try-on?hairstyle=${generation.hairstyle.id}`)
+      router.push(`/dashboard?hairstyle=${generation.hairstyle.id}`)
     } else {
-      router.push("/try-on")
+      router.push("/dashboard")
     }
     onTryAgain?.(generation)
   }

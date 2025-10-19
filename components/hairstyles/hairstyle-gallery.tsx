@@ -102,7 +102,7 @@ export function HairstyleGallery() {
   }, [searchTerm, selectedCategoryId])
 
   const handleTryOn = (hairstyle: Hairstyle) => {
-    router.push(`/try-on?hairstyle=${hairstyle.id}`)
+    router.push(`/dashboard?hairstyle=${hairstyle.id}`)
   }
 
   if (loading) {

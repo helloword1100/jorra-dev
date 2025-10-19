@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, usePathname } from "next/navigation"
-import { Camera, Battery as Gallery, History, Upload, LayoutDashboard } from "lucide-react"
+import { Battery as Gallery, History, Upload, LayoutDashboard } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -9,11 +9,6 @@ const navItems = [
     label: "Dashboard",
     icon: LayoutDashboard,
     href: "/dashboard",
-  },
-  {
-    label: "Try On",
-    icon: Camera,
-    href: "/try-on",
   },
   {
     label: "Gallery",

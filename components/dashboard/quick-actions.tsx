@@ -10,10 +10,10 @@ export function QuickActions() {
 
   const actions = [
     {
-      title: "Try On Hairstyles",
-      description: "Upload a selfie and try different looks",
+      title: "Open Camera",
+      description: "Capture a selfie and explore new looks",
       icon: Sparkles,
-      onClick: () => router.push("/try-on"),
+      onClick: () => router.push("/dashboard"),
       primary: true,
     },
     {
