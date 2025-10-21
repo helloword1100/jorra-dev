@@ -14,7 +14,9 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const searchParams = useSearchParams()
-  const host = searchParams?.get("host") ?? null
+  // default host to 'jorra' when no ?host=... param is provided
+  const hostParam = searchParams?.get("host") ?? null
+  const host = hostParam ?? "jorra"
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth")
