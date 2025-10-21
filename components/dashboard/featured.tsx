@@ -207,7 +207,7 @@ export default function Featured({ username, host }: FeaturedProps) {
     }
   }, [isCameraActive, capturedPhoto])
 
-  const preselectedHairstyleId = searchParams?.get("hairstyle")
+  const preselectedHairstyleId = host ?? (searchParams?.get("hairstyle") ?? "jorra")
 
   useEffect(() => {
     if (!hairstyles.length || !preselectedHairstyleId) return
