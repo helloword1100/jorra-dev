@@ -11,7 +11,7 @@ import {
 } from "react"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Sparkles, Camera, AlertCircle, UploadCloud, Check, RefreshCw } from "lucide-react"
+import { Sparkles, Camera, AlertCircle, UploadCloud, Check, RefreshCw, Calendar } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 
 type FeaturedProps = {
   username?: string
+  host?: string | null
 }
 
 type FeaturedProduct = {
@@ -97,7 +98,7 @@ async function blobToDataUrl(blob: Blob) {
   })
 }
 
-export default function Featured({ username }: FeaturedProps) {
+export default function Featured({ username, host }: FeaturedProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -110,7 +111,7 @@ export default function Featured({ username }: FeaturedProps) {
 
   const [hairstyles, setHairstyles] = useState<Hairstyle[]>([])
   const [loadingHairstyles, setLoadingHairstyles] = useState(true)
-  const [selectedHairstyleId, setSelectedHairstyleId] = useState<number | null>(null)
+  const [selectedHairstyleId, setSelectedHairstyleId] = useState<string | number | null>(null)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [selectedColorIndex, setSelectedColorIndex] = useState<number | null>(null)
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null)
@@ -121,6 +122,26 @@ export default function Featured({ username }: FeaturedProps) {
   const [isCaptureReady, setIsCaptureReady] = useState(false)
   const [generationProgress, setGenerationProgress] = useState(0)
   const [generationElapsedSeconds, setGenerationElapsedSeconds] = useState(0)
+  const [nhbHairStyles, setNHBHairStyles] = useState<any>([]);
+  const [loadingNHB, setLoadingNHB] = useState<boolean>(false);
+
+
+  const getNHBHairStyles = async () => {
+    try {
+      setLoadingNHB(true);
+      const response = await HairstyleService.getNHBHairstyles();
+
+      console.log('nhb hairstyles', response.hairstyles);
+
+      setNHBHairStyles(response.hairstyles);
+      setLoadingNHB(false);
+
+    } catch (error) {
+      setNHBHairStyles([])
+      setLoadingNHB(false);
+
+    }
+  }
 
   useEffect(() => {
     const loadHairstyles = async () => {
@@ -142,6 +163,7 @@ export default function Featured({ username }: FeaturedProps) {
     }
 
     void loadHairstyles()
+    getNHBHairStyles()
   }, [])
 
   useEffect(() => {
@@ -253,10 +275,77 @@ export default function Featured({ username }: FeaturedProps) {
     return hairstyles.slice(0, Math.max(hairstyles.length, 8))
   }, [hairstyles])
 
-  const selectedHairstyle = useMemo(
-    () => hairstyles.find((style) => style.id === selectedHairstyleId) || null,
-    [hairstyles, selectedHairstyleId],
-  )
+  // Resolve selected hairstyle from either local `hairstyles` or remote `nhbHairStyles`.
+  const selectedHairstyle = useMemo(() => {
+    if (selectedHairstyleId === null) return null
+    const idStr = String(selectedHairstyleId)
+    const local = hairstyles.find((s) => String(s.id) === idStr)
+    if (local) return local
+    const remote = (nhbHairStyles || []).find((s: any) => String(s?.id) === idStr)
+    return remote || null
+  }, [hairstyles, nhbHairStyles, selectedHairstyleId])
+
+  const isSelectedFromNHB = useMemo(() => {
+    if (selectedHairstyleId === null) return false
+    const idStr = String(selectedHairstyleId)
+    return (nhbHairStyles || []).some((s: any) => String(s?.id) === idStr)
+  }, [nhbHairStyles, selectedHairstyleId])
+
+  // const handleBookOnly = () => {
+  //   if (!selectedHairstyle) return
+  //   const params = new URLSearchParams()
+  //   params.set("hairstyleId", String((selectedHairstyle as any).id))
+  //   if ((selectedHairstyle as any).name) params.set("hairstyleName", String((selectedHairstyle as any).name))
+  //   const imageUrl = (selectedHairstyle as any).image_url || (selectedHairstyle as any).thumbnail?.url
+  //   if (imageUrl) params.set("image", String(imageUrl))
+  //   params.set("origin", "featured")
+  //   if (host === 'NHB') {
+  //     router.push(`${process.env.NHB_REDIRECT_URL}/preference/${params.toString()}`)
+
+  //   } else {
+  //     router.push(`/booking?${params.toString()}`)
+
+  //   }
+  // }
+
+  const handleBookOnly = () => {
+    if (!selectedHairstyle) return
+
+    console.log('hey', selectedHairstyle);
+
+
+    const id = String((selectedHairstyle as any).id)
+    const name = (selectedHairstyle as any).name || ""
+    const imageUrl =
+      (selectedHairstyle as any).image_url || (selectedHairstyle as any).thumbnail?.url || ""
+
+    // For local booking keep existing query format
+    const localQ = new URLSearchParams()
+    localQ.set("hairstyleId", id)
+    if (name) localQ.set("hairstyleName", name)
+    if (imageUrl) localQ.set("image", imageUrl)
+    localQ.set("origin", "featured")
+
+
+
+    if (host === "NHB") {
+      // External NHB redirect: /preference/:id?data={...}
+      const nhbBase = ("https://nhb-booking-platform.vercel.app").replace(/\/$/, "")
+      const payload = {
+        hairstyleId: id,
+        hairstyleName: name,
+        image: imageUrl,
+        origin: "featured",
+      }
+      const dataParam = encodeURIComponent(JSON.stringify(payload))
+      const target = `${nhbBase}/preference/${encodeURIComponent(id)}?data=${dataParam}`
+      router.push(target)
+    } else {
+      router.push(`/booking?${localQ.toString()}`)
+    }
+  }
+
+
 
   const startCamera = useCallback(async () => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
@@ -342,8 +431,8 @@ export default function Featured({ username }: FeaturedProps) {
   }
 
   const handleGenerate = async () => {
-    if (!capturedPhoto) {
-      setFormMessage("Capture or upload a selfie to get started.")
+    if (isSelectedFromNHB) {
+      setFormMessage("This hairstyle is provided by NHB. Please use 'Book Appointment' to continue.")
       return
     }
 
@@ -352,17 +441,23 @@ export default function Featured({ username }: FeaturedProps) {
       return
     }
 
-    if (user && user.try_ons <= 0) {
-      setFormMessage("You have no try-ons remaining. Please contact support to refresh your balance.")
+    if (!capturedPhoto) {
+      setFormMessage("Capture or upload a selfie to get started.")
       return
     }
+
+    // if (user && user.try_ons <= 0) {
+    //   setFormMessage("You have no try-ons remaining. Please contact support to refresh your balance.")
+    //   return
+    // }
 
     setFormMessage(null)
     setIsGenerating(true)
 
     try {
       const selfieFile = dataUrlToFile(capturedPhoto, "selfie.jpg")
-      const resultBlob = await TryOnService.applyHairstyleById(selectedHairstyle.id, selfieFile)
+      const hairstyleIdForApi = (selectedHairstyle as any).id
+      const resultBlob = await TryOnService.applyHairstyleById(hairstyleIdForApi, selfieFile)
       const resultDataUrl = await blobToDataUrl(resultBlob)
 
       if (generationIntervalRef.current !== null) {
@@ -382,8 +477,8 @@ export default function Featured({ username }: FeaturedProps) {
       stopCamera(streamRef, videoRef, setIsCameraActive, setIsCaptureReady)
 
       const params = new URLSearchParams({
-        hairstyleId: selectedHairstyle.id.toString(),
-        hairstyleName: selectedHairstyle.name,
+        hairstyleId: String((selectedHairstyle as any).id),
+        hairstyleName: String((selectedHairstyle as any).name || ""),
       })
 
       if (typeof window !== "undefined") {
@@ -420,8 +515,13 @@ export default function Featured({ username }: FeaturedProps) {
     return "Open camera"
   }, [capturedPhoto, isCameraActive, isCaptureReady])
 
-  const isGenerateDisabled =
-    !capturedPhoto || !selectedHairstyle || isGenerating || (user ? user.try_ons <= 0 : false)
+  // const isGenerateDisabled =
+  //   !capturedPhoto || !selectedHairstyle || isGenerating || (user ? user.try_ons <= 0 : false)
+
+  // If the selected hairstyle is from NHB (other hairstyles), we only allow booking (no selfie/generation required).
+  const isGenerateDisabled = isSelectedFromNHB
+    ? !selectedHairstyleId || isGenerating
+    : !capturedPhoto || !selectedHairstyle || isGenerating
 
   const progressPercentage = Math.min(Math.round(generationProgress), 100)
   const displayedElapsedSeconds = Math.min(generationElapsedSeconds, 35)
@@ -608,48 +708,119 @@ export default function Featured({ username }: FeaturedProps) {
         <section className="space-y-10">
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-semibold text-[#1F1F1F] sm:text-xl">Featured Afro Hairstyles</h2>
+              <div className="flex gap-4">
+                <h2 className="text-lg font-semibold text-[#1F1F1F] sm:text-xl">Featured Afro Hairstyles </h2>
+                <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-semibold bg-pink-50 text-pink-600 border border-pink-200 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
+                  AI
+                </span>
+              </div>
+
               <p className="text-sm text-muted-foreground">Select a style to preview on your captured photo.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {loadingHairstyles
+              {loadingHairstyles && loadingNHB
                 ? Array.from({ length: 8 }).map((_, index) => (
-                    <div
-                      key={`hairstyle-skeleton-${index}`}
-                      className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-[#F13DD4]/20 p-4"
-                    >
-                      <div className="h-20 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
-                      <div className="h-3 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
-                    </div>
-                  ))
+                  <div
+                    key={`hairstyle-skeleton-${index}`}
+                    className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-[#F13DD4]/20 p-4"
+                  >
+                    <div className="h-20 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
+                    <div className="h-3 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
+                  </div>
+                ))
                 : displayedHairstyles.map((style) => (
+                  <button
+                    key={style.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedHairstyleId(style.id)
+                      setFormMessage(null)
+                    }}
+                    className={`flex flex-col items-center gap-3 rounded-3xl border p-4 transition ${selectedHairstyleId === style.id
+                      ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg"
+                      : "border-transparent bg-white/60 hover:border-[#F13DD4]/40"
+                      }`}
+                  >
+                    <div className="relative h-20 w-20 overflow-hidden rounded-full bg-white shadow-inner">
+                      <Image
+                        src={resolveImageUrl(style.image_url)}
+                        alt={style.name}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-[#2E2E2E] text-center">{style.name}</span>
+                  </button>
+                ))}
+            </div>
+
+
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <div >
+                <h2 className="text-lg font-semibold text-[#1F1F1F] sm:text-xl">Other Hairstyles </h2>
+
+              </div>
+
+              <p className="text-sm text-muted-foreground">Select a style to preview on your captured photo.</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {loadingHairstyles && loadingNHB
+                ? Array.from({ length: 8 }).map((_, index) => (
+                  <div
+                    key={`hairstyle-skeleton-${index}`}
+                    className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-[#F13DD4]/20 p-4"
+                  >
+                    <div className="h-20 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
+                    <div className="h-3 w-20 animate-pulse rounded-full bg-[#F9E6FF]" />
+                  </div>
+                ))
+                : nhbHairStyles.map((style: any) => {
+                  const imageSrc =
+                    style.image_url ||
+                    (style.thumbnail && (style.thumbnail.url || style.thumbnail.path)) ||
+                    "/placeholder.svg"
+
+                  return (
                     <button
-                      key={style.id}
+                      key={(style.id)}
                       type="button"
                       onClick={() => {
                         setSelectedHairstyleId(style.id)
                         setFormMessage(null)
                       }}
-                      className={`flex flex-col items-center gap-3 rounded-3xl border p-4 transition ${
-                        selectedHairstyleId === style.id
-                          ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg"
-                          : "border-transparent bg-white/60 hover:border-[#F13DD4]/40"
-                      }`}
+                      className={`flex flex-col items-center gap-3 rounded-3xl border p-4 transition ${selectedHairstyleId === style.id
+                        ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg scale-105"
+                        : "border-transparent bg-white/60 hover:border-[#F13DD4]/40"
+                        }`}
                     >
                       <div className="relative h-20 w-20 overflow-hidden rounded-full bg-white shadow-inner">
                         <Image
-                          src={resolveImageUrl(style.image_url)}
-                          alt={style.name}
+                          src={imageSrc}
+                          alt={style.name || "hairstyle"}
                           fill
                           sizes="80px"
                           className="object-cover"
                         />
                       </div>
-                      <span className="text-xs font-semibold text-[#2E2E2E] text-center">{style.name}</span>
+                      <span className="text-xs font-semibold text-[#2E2E2E] text-center">
+                        {style.name}
+                      </span>
+                      {style.category && (
+                        <span className="text-[10px] text-muted-foreground">{style.category}</span>
+                      )}
                     </button>
-                  ))}
+                  )
+                })}
             </div>
+
+
           </div>
 
           <div className="space-y-4">
@@ -667,11 +838,10 @@ export default function Featured({ username }: FeaturedProps) {
                     setSelectedProductId(product.id)
                     setFormMessage(null)
                   }}
-                  className={`flex flex-col items-center gap-3 rounded-3xl border p-4 text-center transition ${
-                    selectedProductId === product.id
-                      ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg"
-                      : "border-dashed border-[#F13DD4]/20 bg-white/60 hover:border-[#F13DD4]/40"
-                  }`}
+                  className={`flex flex-col items-center gap-3 rounded-3xl border p-4 text-center transition ${selectedProductId === product.id
+                    ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg"
+                    : "border-dashed border-[#F13DD4]/20 bg-white/60 hover:border-[#F13DD4]/40"
+                    }`}
                 >
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F9F5FF]">
                     <Image src={product.image} alt={product.name} width={48} height={48} />
@@ -701,9 +871,8 @@ export default function Featured({ username }: FeaturedProps) {
                     setFormMessage(null)
                   }}
                   aria-label={`Select colour ${color}`}
-                  className={`h-12 w-12 rounded-full border-2 transition ${
-                    selectedColorIndex === index ? "border-[#F13DD4] scale-110" : "border-transparent"
-                  }`}
+                  className={`h-12 w-12 rounded-full border-2 transition ${selectedColorIndex === index ? "border-[#F13DD4] scale-110" : "border-transparent"
+                    }`}
                   style={{ backgroundColor: color }}
                 />
               ))}
@@ -721,11 +890,16 @@ export default function Featured({ username }: FeaturedProps) {
         )}
         <Button
           size="lg"
-          disabled={isGenerateDisabled}
-          onClick={handleGenerate}
+          // disabled={isGenerateDisabled}
+          onClick={isSelectedFromNHB ? handleBookOnly : handleGenerate}
           className="h-14 w-full max-w-xs rounded-full bg-[#F13DD4] text-base font-semibold shadow-[0_20px_40px_rgba(241,61,212,0.35)] hover:bg-[#E034C8] disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
         >
-          {isGenerating ? (
+          {isSelectedFromNHB ? (
+            <>
+              <Calendar className="mr-2 h-5 w-5" />
+              Book Appointment
+            </>
+          ) : isGenerating ? (
             <>
               <Sparkles className="mr-2 h-5 w-5 animate-spin" />
               Generating…

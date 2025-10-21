@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
@@ -13,6 +13,8 @@ export default function DashboardPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
+  const searchParams = useSearchParams()
+  const host = searchParams?.get("host") ?? null
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth")
@@ -29,15 +31,17 @@ export default function DashboardPage() {
 
   if (!user) return null
 
+
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar host={host} />
       <SidebarInset>
         <MobileHeader />
 
         <div className="flex-1 bg-gradient-to-b from-[#F4ECFF] via-white to-white px-4 pb-24 pt-6 md:px-10 md:pb-12 md:pt-10">
           <div className="mx-auto w-full max-w-5xl">
-            <Featured username={user.username} />
+            <Featured username={user.username} host={host} />
           </div>
         </div>
 

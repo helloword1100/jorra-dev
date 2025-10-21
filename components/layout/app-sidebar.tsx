@@ -19,9 +19,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Camera, Battery as Gallery, History, Upload, Settings, LogOut, Crown, Zap, CreditCard } from "lucide-react"
 import Image from "next/image"
 
-export function AppSidebar() {
+export function AppSidebar({ host }: { host?: any }) {
   const { user, logout } = useAuth()
   const router = useRouter()
+
+
+
 
   const handleLogout = () => {
     logout()
@@ -80,106 +83,120 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator className="mx-0 bg-border/50" />
 
-        <SidebarGroup className="py-4">
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Navigation
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/dashboard")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <Camera className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/gallery")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <Gallery className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Style Gallery</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/history")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <History className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">My History</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/upload")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <Upload className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Upload Style</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/pricing")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Pricing</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
 
-        <SidebarSeparator className="mx-0 bg-border/50" />
+        {
+          host === 'jorra' && (<>
+            <SidebarSeparator className="mx-0 bg-border/50" />
+            <SidebarGroup className="py-4">
+              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Navigation
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation("/dashboard")}
+                      className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                    >
+                      <Camera className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Dashboard</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation("/gallery")}
+                      className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                    >
+                      <Gallery className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Style Gallery</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation("/history")}
+                      className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                    >
+                      <History className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">My History</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation("/upload")}
+                      className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                    >
+                      <Upload className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Upload Style</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation("/pricing")}
+                      className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                    >
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Pricing</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup> </>)
+        }
 
-        <SidebarGroup className="py-4">
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Account Status
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="space-y-3 p-3 rounded-xl bg-card/50 border border-border/30">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground font-medium">Status</span>
-                <div className="flex items-center gap-1.5">
-                  <Crown className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-foreground font-semibold">Active</span>
+
+
+
+        {
+          host === 'jorra' && (<>
+            <SidebarSeparator className="mx-0 bg-border/50" />
+            <SidebarGroup className="py-4">
+              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Account Status
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <div className="space-y-3 p-3 rounded-xl bg-card/50 border border-border/30">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground font-medium">Status</span>
+                    <div className="flex items-center gap-1.5">
+                      <Crown className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-foreground font-semibold">Active</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground font-medium">Member Since</span>
+                    <span className="text-foreground font-semibold">{memberSince}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground font-medium">Member Since</span>
-                <span className="text-foreground font-semibold">{memberSince}</span>
-              </div>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarGroupContent>
+            </SidebarGroup> </>)
+        }
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-border/50">
-        <SidebarMenu className="space-y-1">
-          <SidebarMenuItem>
-            <SidebarMenuButton className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200">
-              <Settings className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">Settings</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={handleLogout}
-              className="h-10 px-3 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors duration-200"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="font-medium">Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      {
+        host === 'jorra' && (
+          <>
+            <SidebarFooter className="p-4 border-t border-border/50">
+              <SidebarMenu className="space-y-1">
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200">
+                    <Settings className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Settings</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={handleLogout}
+                    className="h-10 px-3 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors duration-200"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="font-medium">Logout</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter></>
+        )
+      }
     </Sidebar>
   )
 }

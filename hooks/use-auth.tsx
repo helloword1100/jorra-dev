@@ -8,12 +8,13 @@ interface User {
   username: string
   try_ons: number
   user_id: number
+
 }
 
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (username: string, password: string) => Promise<void>
+  login: (username: string, password: string, host: string) => Promise<void>
   signup: (username: string, password: string) => Promise<void>
   logout: () => void
   refreshUser: () => Promise<void>
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshUser()
   }, [])
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, host: string) => {
     console.log("[v0] Attempting login for:", username)
     try {
       const response = await AuthService.login(username, password)
@@ -58,7 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userData)
 
       console.log("[v0] Navigating to dashboard...")
-      router.push("/dashboard")
+
+      if (host === 'NHB') {
+        router.push("/dashboard?host=NHB")
+      } else {
+        router.push("/dashboard?host=jorra")
+
+      }
 
       setTimeout(async () => {
         try {
@@ -91,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userData)
 
       console.log("[v0] Navigating to dashboard...")
-      router.push("/dashboard")
+      router.push("/dashboard?host=jorra")
 
       setTimeout(async () => {
         try {
