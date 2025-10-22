@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Hairstyle } from "@/lib/api"
-import { Heart, Scissors } from "lucide-react"
+import { Heart, Scissors, Trash2, Loader2 } from "lucide-react"
 import Image from "next/image"
 
 interface HairstyleCardProps {
@@ -12,9 +12,11 @@ interface HairstyleCardProps {
   onTryOn: (hairstyle: Hairstyle) => void
   onLike?: (hairstyle: Hairstyle) => void
   isLiked?: boolean
+  onDelete?: (hairstyle: Hairstyle) => void
+  isDeleting?: boolean
 }
 
-export function HairstyleCard({ hairstyle, onTryOn, onLike, isLiked }: HairstyleCardProps) {
+export function HairstyleCard({ hairstyle, onTryOn, onLike, isLiked, onDelete, isDeleting }: HairstyleCardProps) {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://try-on-local.docwyn.com"
   const imageUrl = hairstyle.image_url.startsWith("http")
     ? hairstyle.image_url
@@ -51,6 +53,20 @@ export function HairstyleCard({ hairstyle, onTryOn, onLike, isLiked }: Hairstyle
                 className="bg-white/90 hover:bg-white text-foreground"
               >
                 <Heart className={`h-4 w-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onDelete(hairstyle)
+                }}
+                disabled={isDeleting}
+                className="bg-red-500/90 hover:bg-red-500 text-white disabled:opacity-70"
+              >
+                {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </Button>
             )}
           </div>

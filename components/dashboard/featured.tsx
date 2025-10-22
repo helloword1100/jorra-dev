@@ -23,40 +23,6 @@ type FeaturedProps = {
   username?: string
 }
 
-type FeaturedProduct = {
-  id: string
-  name: string
-  description: string
-  image: string
-}
-
-const FEATURED_PRODUCTS: FeaturedProduct[] = [
-  {
-    id: "shampoo-conditioner",
-    name: "Shampoo & Conditioner",
-    description: "Prep your hair with salon-grade care",
-    image: "/placeholder.svg",
-  },
-  {
-    id: "take-down",
-    name: "Hair Take Down",
-    description: "Gentle removal to protect your strands",
-    image: "/placeholder.svg",
-  },
-  {
-    id: "medium-bun",
-    name: "Medium Braid Bun",
-    description: "Elegant bun for every occasion",
-    image: "/placeholder.svg",
-  },
-  {
-    id: "curly-braid",
-    name: "French Curly Braid",
-    description: "Defined curls with a protective style",
-    image: "/placeholder.svg",
-  },
-]
-
 const HAIR_COLORS = ["#8B4513", "#D2691E", "#2F1B14", "#C0C0C0", "#DEB887", "#F4A460", "#CD853F", "#A0522D", "#800080"]
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://try-on-local.docwyn.com"
@@ -111,7 +77,6 @@ export default function Featured({ username }: FeaturedProps) {
   const [hairstyles, setHairstyles] = useState<Hairstyle[]>([])
   const [loadingHairstyles, setLoadingHairstyles] = useState(true)
   const [selectedHairstyleId, setSelectedHairstyleId] = useState<number | null>(null)
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [selectedColorIndex, setSelectedColorIndex] = useState<number | null>(null)
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null)
   const [cameraError, setCameraError] = useState<string | null>(null)
@@ -248,15 +213,15 @@ export default function Featured({ username }: FeaturedProps) {
     }
   }, [isGenerating])
 
-  const displayedHairstyles = useMemo(() => {
-    if (!hairstyles.length) return []
-    return hairstyles.slice(0, Math.max(hairstyles.length, 8))
-  }, [hairstyles])
-
   const selectedHairstyle = useMemo(
     () => hairstyles.find((style) => style.id === selectedHairstyleId) || null,
     [hairstyles, selectedHairstyleId],
   )
+
+  const displayedHairstyles = useMemo(() => {
+    if (!hairstyles.length) return []
+    return hairstyles.slice(0, Math.max(hairstyles.length, 8))
+  }, [hairstyles])
 
   const startCamera = useCallback(async () => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
@@ -649,39 +614,6 @@ export default function Featured({ username }: FeaturedProps) {
                       <span className="text-xs font-semibold text-[#2E2E2E] text-center">{style.name}</span>
                     </button>
                   ))}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-[#1F1F1F] sm:text-xl">Featured Makeup Products</h2>
-              <p className="text-sm text-muted-foreground">Complete the look with these expert picks.</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {FEATURED_PRODUCTS.map((product) => (
-                <button
-                  key={product.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedProductId(product.id)
-                    setFormMessage(null)
-                  }}
-                  className={`flex flex-col items-center gap-3 rounded-3xl border p-4 text-center transition ${
-                    selectedProductId === product.id
-                      ? "border-[#F13DD4] bg-[#FFF2FB] shadow-lg"
-                      : "border-dashed border-[#F13DD4]/20 bg-white/60 hover:border-[#F13DD4]/40"
-                  }`}
-                >
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F9F5FF]">
-                    <Image src={product.image} alt={product.name} width={48} height={48} />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-semibold text-[#1F1F1F]">{product.name}</p>
-                    <p className="text-xs text-muted-foreground">{product.description}</p>
-                  </div>
-                </button>
-              ))}
             </div>
           </div>
 

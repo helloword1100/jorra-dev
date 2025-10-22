@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation"
 import { Battery as Gallery, History, Upload, LayoutDashboard } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/use-auth"
 
 const navItems = [
   {
@@ -30,11 +31,15 @@ const navItems = [
 export function MobileBottomNav() {
   const router = useRouter()
   const pathname = usePathname()
+  const { user } = useAuth()
+  const isGuestUser = user?.username?.trim().toLowerCase() === "guest"
+
+  const visibleNavItems = isGuestUser ? navItems.filter((item) => item.href !== "/history") : navItems
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:hidden">
       <div className="flex items-center justify-around h-16 px-2">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
 

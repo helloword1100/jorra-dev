@@ -23,13 +23,15 @@ export function HairstyleGallery() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const router = useRouter()
 
   const loadHairstyles = async (reset = false) => {
     try {
       console.log("[v0] Loading hairstyles with params:", { searchTerm, selectedCategoryId })
-
       if (reset) {
+        setError(null)
         setLoading(true)
         setHairstyles([])
       } else {
@@ -74,6 +76,28 @@ export function HairstyleGallery() {
     } finally {
       setLoading(false)
       setLoadingMore(false)
+    }
+  }
+
+  const handleDelete = async (hairstyleId: number) => {
+    if (typeof window !== "undefined") {
+      const shouldDelete = window.confirm("Are you sure you want to delete this hairstyle? This action cannot be undone.")
+      if (!shouldDelete) {
+        return
+      }
+    }
+
+    setDeletingId(hairstyleId)
+    setError(null)
+
+    try {
+      await HairstyleService.deleteHairstyle(hairstyleId)
+      setHairstyles((prev) => prev.filter((hairstyle) => hairstyle.id !== hairstyleId))
+    } catch (error) {
+      console.error("[v0] Failed to delete hairstyle:", error)
+      setError(error instanceof Error ? error.message : "Failed to delete hairstyle")
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -154,12 +178,24 @@ export function HairstyleGallery() {
           : "No hairstyles found"}
       </div>
 
+      {error && (
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
       {/* Gallery Grid */}
       {hairstyles.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {hairstyles.map((hairstyle) => (
-              <HairstyleCard key={hairstyle.id} hairstyle={hairstyle} onTryOn={handleTryOn} />
+              <HairstyleCard
+                key={hairstyle.id}
+                hairstyle={hairstyle}
+                onTryOn={handleTryOn}
+                onDelete={(item) => handleDelete(item.id)}
+                isDeleting={deletingId === hairstyle.id}
+              />
             ))}
           </div>
 

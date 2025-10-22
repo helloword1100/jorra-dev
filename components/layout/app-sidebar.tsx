@@ -34,6 +34,7 @@ export function AppSidebar() {
 
   if (!user) return null
 
+  const isGuestUser = user.username.trim().toLowerCase() === "guest"
   const memberSince = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -106,15 +107,17 @@ export function AppSidebar() {
                   <span className="font-medium">Style Gallery</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => handleNavigation("/history")}
-                  className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
-                >
-                  <History className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">My History</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {!isGuestUser && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => handleNavigation("/history")}
+                    className="h-10 px-3 rounded-lg hover:bg-sidebar-accent transition-colors duration-200"
+                  >
+                    <History className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">My History</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => handleNavigation("/upload")}
